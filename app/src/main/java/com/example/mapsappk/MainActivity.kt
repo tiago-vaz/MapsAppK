@@ -13,6 +13,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity() {
 
+    //Lista de endereços da FIAP a serem adicionados no mapa. Criado como arrayList de Place para
+    //facilitar a manipulação
     private val places = arrayListOf(
         Place("FIAP Campus Vila Olimpia", LatLng(-23.5955843, -46.6851937),
             "Rua Olimpíadas, 186 - São Paulo - SP", 4.8f),
@@ -25,22 +27,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync{
+            //Adicionando os marcadores
             googleMap -> addMarkers(googleMap)
 
+            //Setando os limites do mapa de acordo com os limites dos lugares incluídos na lista de
+            //marcadores
             googleMap.setOnMapLoadedCallback {
                 val bounds = LatLngBounds.builder()
                 places.forEach{
                     bounds.include(it.latLng)
                 }
+                //Posiciona a câmera em posição que cubra uma área onde todos os marcadores apareçam
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(),100))
             }
 
         }
     }
 
+    //Função auxiliar para criar os marcadores com as informações de cada Place e adicionando
+    //um ícone customizado
     private fun addMarkers(googleMap: GoogleMap){
         places.forEach { place ->
             val marker = googleMap.addMarker(
@@ -53,9 +60,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-
-
 
 data class Place(
     val name: String,
